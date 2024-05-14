@@ -1,0 +1,15 @@
+E:\VSProjects\ceng469-hw2\bin\Debug\net8.0\ceng469-hw2.exe
+E:\VSProjects\ceng469-hw2\bin\Debug\net8.0\ceng469-hw2.deps.json
+E:\VSProjects\ceng469-hw2\bin\Debug\net8.0\ceng469-hw2.runtimeconfig.json
+E:\VSProjects\ceng469-hw2\bin\Debug\net8.0\ceng469-hw2.dll
+E:\VSProjects\ceng469-hw2\bin\Debug\net8.0\ceng469-hw2.pdb
+E:\VSProjects\ceng469-hw2\obj\Debug\net8.0\ceng469-hw2.GeneratedMSBuildEditorConfig.editorconfig
+E:\VSProjects\ceng469-hw2\obj\Debug\net8.0\ceng469-hw2.AssemblyInfoInputs.cache
+E:\VSProjects\ceng469-hw2\obj\Debug\net8.0\ceng469-hw2.AssemblyInfo.cs
+E:\VSProjects\ceng469-hw2\obj\Debug\net8.0\ceng469-hw2.csproj.CoreCompileInputs.cache
+E:\VSProjects\ceng469-hw2\obj\Debug\net8.0\ceng469-hw2.sourcelink.json
+E:\VSProjects\ceng469-hw2\obj\Debug\net8.0\ceng469-hw2.dll
+E:\VSProjects\ceng469-hw2\obj\Debug\net8.0\refint\ceng469-hw2.dll
+E:\VSProjects\ceng469-hw2\obj\Debug\net8.0\ceng469-hw2.pdb
+E:\VSProjects\ceng469-hw2\obj\Debug\net8.0\ceng469-hw2.genruntimeconfig.cache
+E:\VSProjects\ceng469-hw2\obj\Debug\net8.0\ref\ceng469-hw2.dll

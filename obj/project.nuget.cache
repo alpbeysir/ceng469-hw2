@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "GKiepLaB4aW/HwtSSzuvFDTXb3AphdseLqn+/ExhoJyEr3e+bQDngHb1knq54gam3Fso2wXTttJANqFJ6OtmNg==",
+  "success": true,
+  "projectFilePath": "E:\\VSProjects\\ceng469-hw2\\ceng469-hw2.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Alp Beysir\\.nuget\\packages\\microsoft.dotnet.ilcompiler\\8.0.3\\microsoft.dotnet.ilcompiler.8.0.3.nupkg.sha512",
+    "C:\\Users\\Alp Beysir\\.nuget\\packages\\microsoft.net.illink.tasks\\8.0.3\\microsoft.net.illink.tasks.8.0.3.nupkg.sha512",
+    "C:\\Users\\Alp Beysir\\.nuget\\packages\\runtime.win-x64.microsoft.dotnet.ilcompiler\\8.0.3\\runtime.win-x64.microsoft.dotnet.ilcompiler.8.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}

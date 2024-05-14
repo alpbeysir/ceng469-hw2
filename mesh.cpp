@@ -69,14 +69,8 @@ Mesh load_mesh(const std::string& fileName)
                 else if (split[0] == "f") {
                     bool is_quad = split.size() == 5;
                     bool has_vertex_normals = split[1].find('//') != std::string::npos;
-                    if (is_quad) {
-                        Quad q{ vi(split[1]), vi(split[2]), vi(split[3]), vi(split[4]) };
-                        mesh.quads.push_back(q);
-                    }
-                    else {
-                        Triangle t{ vi(split[1]), vi(split[2]), vi(split[3]) };
-                        mesh.tris.push_back(t);
-                    }
+                    Triangle t{ vi(split[1]), vi(split[2]), vi(split[3]) };
+                    mesh.tris.push_back(t);
                 }
                 else
                 {
@@ -90,15 +84,6 @@ Mesh load_mesh(const std::string& fileName)
     else
     {
         exit(-1);
-    }
-
-    assert(mesh.tris.size() == 0 ^ mesh.quads.size() == 0);
-
-    if (mesh.tris.size() != 0) {
-        // triangle mesh
-    }
-    else if (mesh.quads.size() != 0) {
-        // quad mesh
     }
 
     return mesh;
@@ -121,19 +106,10 @@ void save_obj_debug(const Mesh& mesh, const std::string& filename) {
         file << "vn " << normal.x << " " << normal.y << " " << normal.z << "\n";
     }
 
-    if (mesh.tris.size() > 0) {
-        // Write faces (triangles)
-        for (const auto& triangle : mesh.tris) {
-            file << "f " << (triangle.vi1 + 1) << "//" << " " << (triangle.vi2 + 1) << "//" << " " << (triangle.vi3 + 1) << "//" << "\n";
-        }
+    // Write faces (triangles)
+    for (const auto& triangle : mesh.tris) {
+        file << "f " << (triangle.vi1 + 1) << "//" << " " << (triangle.vi2 + 1) << "//" << " " << (triangle.vi3 + 1) << "//" << "\n";
     }
-    else {
-        // Write faces (quads)
-        for (const auto& quad : mesh.quads) {
-            file << "f " << (quad.vi1 + 1) << "//" << " " << (quad.vi2 + 1) << "//" << " " << (quad.vi3 + 1) << "//" << " " << (quad.vi4 + 1) << "//" << "\n";
-        }
-    }
-
 
     file.close();
     std::cout << "OBJ file saved successfully: " << filename << std::endl;

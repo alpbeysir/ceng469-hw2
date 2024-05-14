@@ -18,8 +18,6 @@ public:
 	float GetUniform1f(std::string name);
 	void SetUniformMat4f(std::string name, glm::mat4 value);
 	void SetUniformVec3f(std::string name, glm::vec3 value);
-
-
 private:
 	unsigned int id;
 	std::unordered_map<std::string, int> cache;

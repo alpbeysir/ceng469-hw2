@@ -15,35 +15,10 @@ struct Triangle {
     }
 };
 
-struct Quad {
-    int vi1, vi2, vi3, vi4;
-
-    Quad(int vi1, int vi2, int vi3, int vi4) : vi1(vi1), vi2(vi2), vi3(vi3), vi4(vi4) {
-
-    }
-
-    // Custom hash function for Quad (ChatGPT)
-    struct Hash {
-        std::size_t operator()(const Quad& q) const {
-            // Combine hashes of individual members using bitwise xor
-            return std::hash<int>()(q.vi1) ^
-                (std::hash<int>()(q.vi2) << 1) ^
-                (std::hash<int>()(q.vi3) << 2) ^
-                (std::hash<int>()(q.vi4) << 3);
-        }
-    };
-
-    // Custom equals operator for Quad
-    bool operator==(const Quad& other) const {
-        return vi1 == other.vi1 && vi2 == other.vi2 && vi3 == other.vi3 && vi4 == other.vi4;
-    }
-};
-
 struct Mesh {
     std::vector<glm::vec3> verts;
     std::vector<glm::vec3> normals;
     std::vector<Triangle> tris;
-    std::vector<Quad> quads;
 };
 
 

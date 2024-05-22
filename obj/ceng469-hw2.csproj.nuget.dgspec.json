@@ -60,6 +60,34 @@
               "target": "Package",
               "version": "[8.0.3, )",
               "autoReferenced": true
+            },
+            "Silk.NET.Assimp": {
+              "target": "Package",
+              "version": "[2.21.0, )"
+            },
+            "Silk.NET.Input.Common": {
+              "target": "Package",
+              "version": "[2.21.0, )"
+            },
+            "Silk.NET.Input.Glfw": {
+              "target": "Package",
+              "version": "[2.21.0, )"
+            },
+            "Silk.NET.Maths": {
+              "target": "Package",
+              "version": "[2.21.0, )"
+            },
+            "Silk.NET.OpenGL": {
+              "target": "Package",
+              "version": "[2.21.0, )"
+            },
+            "Silk.NET.Windowing": {
+              "target": "Package",
+              "version": "[2.21.0, )"
+            },
+            "StbImageSharp": {
+              "target": "Package",
+              "version": "[2.27.14, )"
             }
           },
           "imports": [

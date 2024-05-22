@@ -8,10 +8,13 @@ using System.Runtime.InteropServices;
 
 namespace HW2
 {
+    [StructLayout(LayoutKind.Sequential)]
     internal struct Light(Vector3 position, Vector3 color)
     {
         public Vector3 Position = position;
+        public float zort;
         public Vector3 Color = color;
+        public float zort2;
 
         public override readonly string ToString()
         {
@@ -22,15 +25,16 @@ namespace HW2
     internal class MedianCut
     {
         private const int LevelCount = 7;
-        private readonly List<Light>[] lightingData = new List<Light>[LevelCount];
+        public readonly List<Light>[] lightingData = new List<Light>[LevelCount];
         private readonly HDRTexture hdr;
         private readonly Vector3[,] SAT;
+        private readonly GL gl;
 
         private readonly Vector3 RGBConst = new(0.2126f, 0.7152f, 0.0722f);
 
         private uint ubo;
 
-        internal void SetupLightUBO(GL gl)
+        internal void SetupLightUBO()
         {
             ubo = gl.GenBuffer();
             gl.BindBuffer(BufferTargetARB.UniformBuffer, ubo);
@@ -38,7 +42,7 @@ namespace HW2
             gl.BindBufferBase(BufferTargetARB.UniformBuffer, 0, ubo);
         }
 
-        internal void UploadLightUBO(GL gl, int level)
+        internal void UploadLightUBO(int level)
         {
             gl.BindBuffer(BufferTargetARB.UniformBuffer, ubo);
             gl.BufferData(GLEnum.UniformBuffer,
@@ -72,7 +76,7 @@ namespace HW2
         private Vector3 GetLightWorldPosition(Vector2 screenPos)
         {
             float u = screenPos.X / hdr.Width;
-            float v = screenPos.Y / hdr.Height;
+            float v = -screenPos.Y / hdr.Height;
 
             float theta = u * 2.0f * MathF.PI;
             float phi = v * MathF.PI;
@@ -84,9 +88,11 @@ namespace HW2
             return new Vector3(x, y, z);
         }
 
-        internal MedianCut(HDRTexture hdr)
+        internal MedianCut(GL gl, HDRTexture hdr)
         {
             this.hdr = hdr;
+            this.gl = gl;
+            SetupLightUBO();
 
             for (int i = 0; i < LevelCount; i++)
             {

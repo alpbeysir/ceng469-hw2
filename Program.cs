@@ -8,6 +8,7 @@ using Silk.NET.Maths;
 using Silk.NET.Input.Glfw;
 using Silk.NET.Windowing.Glfw;
 using HW2.Helpers;
+using static Silk.NET.Core.Native.WinString;
 
 namespace HW2
 {
@@ -21,9 +22,9 @@ namespace HW2
 
         private static HDRTexture HDRI;
         private static CubemapTexture CubemapTexture;
-        private static Helpers.Shader MirrorShader;
-        private static Helpers.Shader GlassShader;
+
         private static Mesh Mesh;
+        private static Mesh DebugMesh;
         private static Skybox Skybox;
         private static MedianCut MedianCut;
         private static Vector3 CameraGaze;
@@ -34,10 +35,17 @@ namespace HW2
         private static float CameraPitch = 45.0f;
         private static IKeyboard Keyboard;
 
-        private static void Main(string[] args)
+        private static Helpers.Shader MirrorShader;
+        private static Helpers.Shader GlassShader;
+        private static Helpers.Shader LightProbeShader;
+        private static Helpers.Shader DebugShader;
+
+        private static void Main()
         {
             GlfwWindowing.RegisterPlatform();
             GlfwInput.RegisterPlatform();
+
+            UserParams.OnNChanged += OnNChanged;
 
             var options = WindowOptions.Default;
             options.Size = new Vector2D<int>(1280, 720);
@@ -72,13 +80,17 @@ namespace HW2
 
             MirrorShader = new Helpers.Shader(Gl, "Shaders/mirror.vert", "Shaders/mirror.frag");
             GlassShader = new Helpers.Shader(Gl, "Shaders/glass.vert", "Shaders/glass.frag");
-            Mesh = new Model(Gl, "models/cube24.obj").Meshes[0];
+            LightProbeShader = new Helpers.Shader(Gl, "Shaders/light_probe.vert", "Shaders/light_probe.frag");
+            DebugShader = new Helpers.Shader(Gl, "Shaders/debug.vert", "Shaders/debug.frag");
 
-            HDRI = new HDRTexture(Gl, "hdrs/Test.hdr");
+            Mesh = new Model(Gl, "models/teapot.obj").Meshes[0];
+            DebugMesh = new Model(Gl, "models/sphere.obj").Meshes[0];
+
+            HDRI = new HDRTexture(Gl, "hdrs/Thumersbach.hdr");
             CubemapTexture = new CubemapTexture(Gl, sideWidth, sideHeight);
             Skybox = new Skybox(Gl, HDRI, CubemapTexture);
-            MedianCut = new MedianCut(HDRI);
-
+            MedianCut = new MedianCut(Gl, HDRI);
+            MedianCut.UploadLightUBO(0);
             Gl.Viewport(window.Size);
         }
 
@@ -87,7 +99,7 @@ namespace HW2
             UserParams.ProcessKey(arg1, arg2, arg3);
         }
 
-        private static unsafe void OnRender(double deltaTime)
+        private static void OnRender(double deltaTime)
         {
             Gl.Enable(EnableCap.DepthTest);
             Gl.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
@@ -101,7 +113,25 @@ namespace HW2
             var view = Matrix4x4.CreateLookAt(cameraPosition, Vector3.Zero, Vector3.UnitY);
             var projection = Matrix4x4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(60), (float)size.X / size.Y, 0.1f, 100.0f);
 
+            var lightCount = (int)MathF.Pow(2, UserParams.AlgoN);
+
             Skybox.Render(view, projection);
+
+            if (true)
+            {
+                DebugMesh.Bind();
+                DebugShader.Use();
+                DebugShader.SetUniform("uView", view);
+                DebugShader.SetUniform("uProjection", projection);
+                for (int i = 0; i < lightCount; i++)
+                {
+                    Light light = MedianCut.lightingData[UserParams.AlgoN][i];
+                    var modelMat = Matrix4x4.CreateScale(0.05f) * Matrix4x4.CreateTranslation(light.Position * 3);
+                    DebugShader.SetUniform("uModel", modelMat);
+                    DebugShader.SetUniform("uColor", light.Color / 500000f);
+                    Gl.DrawArrays(PrimitiveType.Triangles, 0, (uint)DebugMesh.Vertices.Length);
+                }
+            }
 
             Mesh.Bind();
             CubemapTexture.Bind();
@@ -109,21 +139,18 @@ namespace HW2
             switch (UserParams.VisMode)
             {
                 case VisMode.LightProbe:
-
+                    LightProbeShader.Use();
+                    SetCommonUniforms(LightProbeShader, cameraPosition, model, view, projection);
+                    MedianCut.UploadLightUBO(UserParams.AlgoN);
+                    LightProbeShader.SetUniform("uLightCount", lightCount);
                     break;
                 case VisMode.Mirror:
                     MirrorShader.Use();
-                    MirrorShader.SetUniform("uModel", model);
-                    MirrorShader.SetUniform("uView", view);
-                    MirrorShader.SetUniform("uProjection", projection);
-                    MirrorShader.SetUniform("uCameraPos", cameraPosition);
+                    SetCommonUniforms(MirrorShader, cameraPosition, model, view, projection);
                     break;
                 case VisMode.Glass:
                     GlassShader.Use();
-                    GlassShader.SetUniform("uModel", model);
-                    GlassShader.SetUniform("uView", view);
-                    GlassShader.SetUniform("uProjection", projection);
-                    GlassShader.SetUniform("uCameraPos", cameraPosition);
+                    SetCommonUniforms(GlassShader, cameraPosition, model, view, projection);
                     break;
                 case VisMode.Glossy:
 
@@ -134,6 +161,19 @@ namespace HW2
             }
 
             Gl.DrawArrays(PrimitiveType.Triangles, 0, (uint)Mesh.Vertices.Length);
+        }
+
+        private static void OnNChanged()
+        {
+            MedianCut.UploadLightUBO(UserParams.AlgoN);
+        }
+
+        private static void SetCommonUniforms(Helpers.Shader shader, Vector3 cameraPosition, Matrix4x4 model, Matrix4x4 view, Matrix4x4 projection)
+        {
+            shader.SetUniform("uModel", model);
+            shader.SetUniform("uView", view);
+            shader.SetUniform("uProjection", projection);
+            shader.SetUniform("uCameraPos", cameraPosition);
         }
 
         private static void OnFramebufferResize(Vector2D<int> newSize)

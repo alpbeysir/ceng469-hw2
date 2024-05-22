@@ -6,8 +6,8 @@ namespace HW2
 {
     public class CubemapTexture : IDisposable
     {
-        private uint _handle;
-        private GL _gl;
+        private readonly uint _handle;
+        private readonly GL _gl;
 
         public uint Handle => _handle;
         public TextureUnit Unit { get; private set; }

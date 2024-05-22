@@ -24,6 +24,8 @@ namespace HW2
         public static int AlgoN { get; private set; }
         public static VisMode VisMode = VisMode.LightProbe;
 
+        public static Action? OnNChanged;
+
         public static void OnUpdate(double delta, IKeyboard keyboard)
         {
             float speed = 20f * (float)delta;
@@ -51,10 +53,12 @@ namespace HW2
                     SpecularEnabled = !SpecularEnabled;
                     break;
                 case Key.E:
-                    AlgoN = Math.Clamp(AlgoN - 1, 1, 7);
+                    AlgoN = Math.Clamp(AlgoN - 1, 0, 6);
+                    OnNChanged?.Invoke();
                     break;
                 case Key.R:
-                    AlgoN = Math.Clamp(AlgoN + 1, 1, 7);
+                    AlgoN = Math.Clamp(AlgoN + 1, 0, 6);
+                    OnNChanged?.Invoke();
                     break;
                 case Key.Number1:
                     VisMode = VisMode.LightProbe;

@@ -18,9 +18,9 @@ namespace HW2.Helpers
         }
 
         private readonly GL _gl;
-        private Assimp _assimp;
+        private readonly Assimp _assimp;
         public string Directory { get; protected set; } = string.Empty;
-        public List<Mesh> Meshes { get; protected set; } = new List<Mesh>();
+        public List<Mesh> Meshes { get; protected set; } = [];
 
         private unsafe void LoadModel(string path)
         {
@@ -54,16 +54,17 @@ namespace HW2.Helpers
         private unsafe Mesh ProcessMesh(AssimpMesh* mesh, Scene* scene)
         {
             // data to fill
-            List<Vertex> vertices = new();
-            List<uint> indices = new();
-            List<CubemapTexture> textures = new();
+            List<Vertex> vertices = [];
+            List<uint> indices = [];
+            List<CubemapTexture> textures = [];
 
             // walk through each of the mesh's vertices
             for (uint i = 0; i < mesh->MNumVertices; i++)
             {
-                Vertex vertex = new();
-
-                vertex.Position = mesh->MVertices[i];
+                Vertex vertex = new()
+                {
+                    Position = mesh->MVertices[i]
+                };
 
                 // normals
                 if (mesh->MNormals != null)

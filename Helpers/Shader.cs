@@ -7,8 +7,8 @@ namespace HW2.Helpers
 {
     public class Shader : IDisposable
     {
-        private uint _handle;
-        private GL _gl;
+        private readonly uint _handle;
+        private readonly GL _gl;
 
         public Shader(GL gl, string vertexPath, string fragmentPath)
         {

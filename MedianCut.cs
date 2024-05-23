@@ -155,7 +155,6 @@ namespace HW2
                 rightRegionTL.X++;
             }
 
-
             Vector2D<int> topRegionBR = new(BR.X, TL.Y + 1);
             Vector2D<int> bottomRegionTL = new(TL.X, TL.Y + 1);
             while (topRegionBR.Y < BR.Y)
@@ -173,7 +172,10 @@ namespace HW2
             Light light = new(GetLightWorldPosition(centroid), GetAreaSum(TL, BR));
             lightingData[level].Add(light);
 
-            if (hdr.Width > hdr.Height)
+            int width = BR.X - TL.X;
+            int height = BR.Y - TL.Y;
+
+            if (width > height)
             {
                 Calculate(TL, leftRegionBR, level + 1);
                 Calculate(rightRegionTL, BR, level + 1);

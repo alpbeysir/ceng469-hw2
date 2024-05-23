@@ -37,6 +37,8 @@ namespace HW2
         private static Helpers.Shader MirrorShader;
         private static Helpers.Shader GlassShader;
         private static Helpers.Shader LightProbeShader;
+        private static Helpers.Shader GlossyShader;
+        private static Helpers.Shader SpecularDiscoShader;
         private static Helpers.Shader DebugShader;
         private static Helpers.Shader TonemapShader;
 
@@ -84,6 +86,8 @@ namespace HW2
             MirrorShader = new Helpers.Shader(Gl, "Shaders/mirror.vert", "Shaders/mirror.frag");
             GlassShader = new Helpers.Shader(Gl, "Shaders/glass.vert", "Shaders/glass.frag");
             LightProbeShader = new Helpers.Shader(Gl, "Shaders/light_probe.vert", "Shaders/light_probe.frag");
+            GlossyShader = new Helpers.Shader(Gl, "Shaders/glossy.vert", "Shaders/glossy.frag");
+            SpecularDiscoShader = new Helpers.Shader(Gl, "Shaders/specular_disco.vert", "Shaders/specular_disco.frag");
             DebugShader = new Helpers.Shader(Gl, "Shaders/debug.vert", "Shaders/debug.frag");
             TonemapShader = new Helpers.Shader(Gl, "Shaders/fullscreen.vert", "Shaders/tonemap.frag");
 
@@ -91,6 +95,7 @@ namespace HW2
             DebugMesh = new Model(Gl, "models/sphere.obj").Meshes[0];
 
             //HDRI = new HDRTexture(Gl, "hdrs/Beach.hdr");
+            //HDRI = new HDRTexture(Gl, "hdrs/Lonely.hdr");
             //HDRI = new HDRTexture(Gl, "hdrs/Snowstreet.hdr");
             //HDRI = new HDRTexture(Gl, "hdrs/test.hdr");
             HDRI = new HDRTexture(Gl, "hdrs/Thumersbach.hdr");
@@ -109,7 +114,7 @@ namespace HW2
             Gl.BindTexture(GLEnum.Texture2D, TexOffScreenBuffer);
 
             int iLevels = (int)MathF.Ceiling(MathF.Log2((float)MathF.Max(window.Size.X, window.Size.Y)));
-            Gl.TexStorage2D(GLEnum.Texture2D, (uint)iLevels, GLEnum.Rgba32f, (uint)window.Size.X, (uint)window.Size.Y);
+            Gl.TexStorage2D(GLEnum.Texture2D, (uint)iLevels, GLEnum.Rgba32i, (uint)window.Size.X, (uint)window.Size.Y);
 
             Gl.TexParameter(GLEnum.Texture2D, GLEnum.TextureMinFilter, (int)GLEnum.LinearMipmapNearest);
             Gl.TexParameter(GLEnum.Texture2D, GLEnum.TextureMagFilter, (int)GLEnum.Linear);
@@ -159,9 +164,11 @@ namespace HW2
 
                 var lightCount = (int)MathF.Pow(2, UserParams.AlgoN);
 
+                var lightRotationMatrix = Matrix4x4.CreateRotationY(MathHelper.DegreesToRadians(UserParams.SkyboxRotation));
+
                 Skybox.Render(view, projection);
 
-                RenderLightDebug(view, projection, lightCount);
+                //RenderLightDebug(view, projection, lightCount);
 
                 Mesh.Bind();
                 CubemapTexture.Bind();
@@ -173,6 +180,8 @@ namespace HW2
                         SetCommonUniforms(LightProbeShader, cameraPosition, model, view, projection);
                         MedianCut.UploadLightUBO(UserParams.AlgoN);
                         LightProbeShader.SetUniform("uLightCount", lightCount);
+                        LightProbeShader.SetUniform("uSpecularEnabled", UserParams.SpecularEnabled ? 1.0f : 0.0f);
+                        LightProbeShader.SetUniform("uSkyboxRot", lightRotationMatrix);
                         break;
                     case VisMode.Mirror:
                         MirrorShader.Use();
@@ -183,10 +192,20 @@ namespace HW2
                         SetCommonUniforms(GlassShader, cameraPosition, model, view, projection);
                         break;
                     case VisMode.Glossy:
-                        // @TODO
+                        GlossyShader.Use();
+                        SetCommonUniforms(GlossyShader, cameraPosition, model, view, projection);
+                        MedianCut.UploadLightUBO(UserParams.AlgoN);
+                        GlossyShader.SetUniform("uLightCount", lightCount);
+                        GlossyShader.SetUniform("uSpecularEnabled", UserParams.SpecularEnabled ? 1.0f : 0.0f);
+                        GlossyShader.SetUniform("uSkyboxRot", lightRotationMatrix);
                         break;
                     case VisMode.SpecularDisco:
-                        // @TODO
+                        SpecularDiscoShader.Use();
+                        SetCommonUniforms(SpecularDiscoShader, cameraPosition, model, view, projection);
+                        MedianCut.UploadLightUBO(UserParams.AlgoN);
+                        SpecularDiscoShader.SetUniform("uLightCount", lightCount);
+                        SpecularDiscoShader.SetUniform("uSpecularEnabled", UserParams.SpecularEnabled ? 1.0f : 0.0f);
+                        SpecularDiscoShader.SetUniform("uSkyboxRot", lightRotationMatrix);
                         break;
                 }
 

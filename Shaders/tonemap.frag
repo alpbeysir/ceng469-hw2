@@ -20,7 +20,7 @@ void main(void)
     vec3 hdrColor = exp(texture(hdrInput, texCoord)).rgb / mean;
     hdrColor *= exposure;
   
-    vec3 mapped = hdrColor / (hdrColor + vec3(1.0));
+    vec3 mapped = hdrColor;
     mapped = pow(mapped, vec3(1.0 / gamma));
   
     FragColor = vec4(mapped, 1.0);

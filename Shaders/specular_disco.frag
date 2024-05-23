@@ -11,18 +11,17 @@ layout (std140, binding = 0) uniform Lights
     Light lights[128];
 };
 
-vec3 kd = vec3(0.000011, 0.000011, 0.000011);      // diffuse reflectance coefficient
-vec3 ks = vec3(0.000075, 0.000075, 0.000075);   // specular reflectance coefficient
+vec3 ks = vec3(0.0025, 0.0025, 0.0025);   // specular reflectance coefficient
 
 in vec4 fragWorldPos;
 in vec3 fragWorldNor;
+uniform float uSpecularEnabled;
 
 out vec4 FragColor;
 uniform vec3 uCameraPos;
-uniform float uSpecularEnabled;
-uniform mat4 uSkyboxRot;
 
 uniform int uLightCount;
+uniform mat4 uSkyboxRot;
 
 void main(void)
 {
@@ -38,10 +37,9 @@ void main(void)
 		float NdotL = dot(N, L);
 		float NdotH = dot(N, H);
 
-		vec3 diffuseColor = light.color * kd * max(0, NdotL);
-		vec3 specularColor = light.color * ks * pow(max(0, NdotH), 15) * uSpecularEnabled;
+		vec3 specularColor = light.color * ks * pow(max(0, NdotH), 500) * uSpecularEnabled;
 	
-		color += vec4(diffuseColor + specularColor, 0);
+		color += vec4(specularColor, 0);
 	}
 
 	FragColor = log(color + EPSILON);

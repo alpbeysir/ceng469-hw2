@@ -18,7 +18,7 @@ namespace HW2
 
     internal static class UserParams
     {
-        public static float Exposure { get; private set; }
+        public static float Exposure { get; private set; } = 0.18f;
         public static float SkyboxRotation { get; private set; }
         public static bool SpecularEnabled { get; private set; } = true;
         public static int AlgoN { get; private set; }

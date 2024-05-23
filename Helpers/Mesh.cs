@@ -9,7 +9,7 @@ namespace HW2.Helpers
 {
     public class Mesh : IDisposable
     {
-        public Mesh(GL gl, float[] vertices, uint[] indices, List<CubemapTexture> textures)
+        public Mesh(GL gl, float[] vertices, uint[] indices)
         {
             GL = gl;
             Vertices = vertices;

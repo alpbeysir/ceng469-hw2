@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ceng469-hw2")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f802ac0e8f666c9051162fc0bfec3dff75b9055f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e715bdccd89f38dba2b1e246d9235f1fba68360d")]
 [assembly: System.Reflection.AssemblyProductAttribute("ceng469-hw2")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ceng469-hw2")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

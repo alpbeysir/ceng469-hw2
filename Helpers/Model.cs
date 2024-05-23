@@ -56,7 +56,6 @@ namespace HW2.Helpers
             // data to fill
             List<Vertex> vertices = [];
             List<uint> indices = [];
-            List<CubemapTexture> textures = [];
 
             // walk through each of the mesh's vertices
             for (uint i = 0; i < mesh->MNumVertices; i++)
@@ -81,7 +80,7 @@ namespace HW2.Helpers
             }
 
             // return a mesh object created from the extracted mesh data
-            var result = new Mesh(_gl, BuildVertices(vertices), BuildIndices(indices), textures);
+            var result = new Mesh(_gl, BuildVertices(vertices), BuildIndices(indices));
             return result;
         }
 

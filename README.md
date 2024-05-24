@@ -130,3 +130,13 @@ void main(void)
     FragColor = vec4(mapped, 1.0);
 }
 ```
+
+## Bugs and hurdles along the way
+
+One pesky bug that took way too long to discover was that in the median cut calculation, I was always choosing which dimension to divide along using the original image dimensions. Instead I should have used the dimensions of the region of that step. 
+
+Another bug was choosing the wrong mip index to sample from in the tonemapper. This created the questionable visuals demonstrated below:
+
+<div style="display: flex;">
+  <img src="tonemap_bug.png" alt="Image 2" style="flex: 85%; padding: 10px;">
+</div>

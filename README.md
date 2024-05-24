@@ -84,3 +84,17 @@ private void Calculate(Vector2D<int> TL, Vector2D<int> BR, int level)
    }
 }
 ```
+
+## Render Modes
+
+To showcase the capabilities of the environment rendering, there are five distinct render modes. 
+
+1. Light Probe - the generated directional lights are used to calculate diffuse and specular shading on the object.
+2. Glass - the camera incident direction is refracted according to the object normal and then sampled, with a glass-like result.
+3. Mirror - the camera incident direction is reflected according to the object normal and then sampled on the skybox resulting in a reflective look.
+4. Glossy - combination of Light Probe and Mirror modes.
+5. Specular Disco - fun debug mode where the algorithm lights are used to calculate only specular and with a very high exponent. Image below.
+
+<div style="display: flex;">
+  <img src="specular_disco.png" alt="Image 2" style="flex: 85%; padding: 10px;">
+</div>

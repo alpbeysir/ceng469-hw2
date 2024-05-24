@@ -1,5 +1,9 @@
 # Computer Graphics II - Median Cut Environment Lighting
 
+<div style="display: flex;">
+  <img src="showcase.png" alt="Image 1" style="flex: 85%; padding: 10px;">
+</div>
+
 This assignment involved the application of advanced HDR environment lighting with OpenGL. Different from the previous homework, I made the decision to use C# instead C++ because I wanted to see how my favourite language would
 handle the OpenGL API. I used the starter files from the open-source Silk.NET bindings, which provide functionality similar to the sampleGL files provided with the homework.
 

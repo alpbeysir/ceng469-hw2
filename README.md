@@ -84,3 +84,59 @@ private void Calculate(Vector2D<int> TL, Vector2D<int> BR, int level)
    }
 }
 ```
+
+## Render Modes
+
+To showcase the capabilities of the environment rendering, there are five distinct render modes. 
+
+1. Light Probe - the generated directional lights are used to calculate diffuse and specular shading on the object.
+2. Glass - the camera incident direction is refracted according to the object normal and then sampled, with a glass-like result.
+3. Mirror - the camera incident direction is reflected according to the object normal and then sampled on the skybox resulting in a reflective look.
+4. Glossy - combination of Light Probe and Mirror modes.
+5. Specular Disco - fun debug mode where the algorithm lights are used to calculate only specular and with a very high exponent. Image below.
+
+<div style="display: flex;">
+  <img src="specular_disco.png" alt="Image 2" style="flex: 85%; padding: 10px;">
+</div>
+
+## Tonemapping
+
+Since we are doing every step of the rendering with HDR before displaying the results we have to apply a tonemapping algorithm. This is done by first rendering the scene to an off-screen buffer, then doing an extra render pass where we render a fullscreen quad. The tonemapping is done in this render pass's fragment shader. The fragment shader samples the input HDR scene and writes to the LDR framebuffer. This framebuffer is then displayed on the screen. 
+
+The tonemapping may be simply described as scaling the scene RGB values based on the average RGB value of the scene. So if the scene contains very high color values the average will also be very high, thus the scaling will still output values within the same range.
+
+A key point here is how the average luminance is obtained. If we were running this on the CPU we could loop through the image and calculate the average directly, but this is not how shaders work. The trick used here is mipmapping. Mipmapping is a hardware feature where we can have lower resolution versions of the same image. Figuratively an image pyramid is formed, each level having half the resolution of the previous level. The last level has a resolution of 1x1 and contains the average color of the buffer. So we can just sample the last level mipmap to obtain the average color.
+
+The fragment shader is given below for reference:
+
+```glsl
+float luminance(vec4 color) {
+    const vec3 weights = vec3(0.2126, 0.7152, 0.0722);
+    return dot(color.rgb, weights);
+}
+
+void main(void)
+{
+    const float gamma = 2.2;
+    vec4 oneSample = exp(textureLod(hdrInput, texCoord, 10));
+    float mean = luminance(oneSample);
+
+    vec3 hdrColor = exp(texture(hdrInput, texCoord)).rgb / mean;
+    hdrColor *= exposure;
+  
+    vec3 mapped = hdrColor;
+    mapped = pow(mapped, vec3(1.0 / gamma));
+  
+    FragColor = vec4(mapped, 1.0);
+}
+```
+
+## Bugs and hurdles along the way
+
+One pesky bug that took way too long to discover was that in the median cut calculation, I was always choosing which dimension to divide along using the original image dimensions. Instead I should have used the dimensions of the region of that step. 
+
+Another bug was choosing the wrong mip index to sample from in the tonemapper. This created the questionable visuals demonstrated below:
+
+<div style="display: flex;">
+  <img src="tonemap_bug.png" alt="Image 2" style="flex: 85%; padding: 10px;">
+</div>
